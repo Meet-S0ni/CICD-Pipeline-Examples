@@ -1,0 +1,22 @@
+steps:
+  - name: Checkout repo
+    uses: actions/checkout@v3
+
+  - name: Set up Git
+    run: |
+      git config --global user.name "github-actions[bot]"
+      git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+  - name: Update image tag
+    run: |
+      echo "dev-${GITHUB_SHA}" > .release/image-tag.txt
+      git add .release/image-tag.txt
+      git commit -m "chore: update image tag"
+      git push origin HEAD:main  # or to a dedicated branch like "release-tags"
+
+  - name: Authenticate with GitHub
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    run: echo "Authenticated with GitHub"
+## you need to create github token with write permission
+## https://docs.github.com/en/actions/tutorials/use-github_token-in-workflows
